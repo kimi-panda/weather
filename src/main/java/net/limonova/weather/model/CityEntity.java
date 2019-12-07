@@ -6,15 +6,15 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "cities")
-public class City extends AbstractNamedEntity {
+public class CityEntity extends AbstractNamedEntity {
 
     @Column(name = "code_gismeteo")
     private String codeGismeteo;
 
-    public City() {
+    public CityEntity() {
     }
 
-    public City(Integer id, String name, String codeGismeteo) {
+    public CityEntity(Integer id, String name, String codeGismeteo) {
         super(id, name);
         this.codeGismeteo = codeGismeteo;
     }
@@ -29,7 +29,7 @@ public class City extends AbstractNamedEntity {
 
     @Override
     public String toString() {
-        return "City{" +
+        return "CityEntity{" +
                 "codeGismeteo=" + codeGismeteo +
                 ", name='" + name + '\'' +
                 ", id=" + id +

@@ -9,8 +9,9 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "weather", uniqueConstraints = {@UniqueConstraint(columnNames = {"city_id", "service_id", "date_time"}, name = "weather_unique_city_service_datetime_idx")})
-public class Weather extends AbstractBaseEntity {
+@Table(name = "weather", uniqueConstraints = {@UniqueConstraint(columnNames = {"city_id", "weather_resource_id", "date_time"},
+        name = "weather_unique_city_weather_resource_datetime_idx")})
+public class WeatherEntity extends AbstractBaseEntity {
 
     @Column(name = "date_time", nullable = false)
     @NotNull
@@ -20,30 +21,34 @@ public class Weather extends AbstractBaseEntity {
     @JoinColumn(name = "city_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    private City city;
+    private CityEntity city;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "service_id", nullable = false)
+    @JoinColumn(name = "weather_resource_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    private WeatherService service;
+    private WeatherResourceEntity weatherResourceEntity;
 
     @Column(name = "temperature")
     @Range(min = -100, max = 100)
     private int temperature;
 
-    public Weather() {
+    public WeatherEntity() {
     }
 
-    public Weather(LocalDateTime dateTime, int temperature) {
+    public WeatherEntity(LocalDateTime dateTime, int temperature) {
         this(null, dateTime, null, null, temperature);
     }
 
-    public Weather(Integer id, LocalDateTime dateTime, City city, WeatherService service, int temperature) {
+    public WeatherEntity(LocalDateTime dateTime, CityEntity city, WeatherResourceEntity weatherResourceEntity, int temperature) {
+        this(null, dateTime, city, weatherResourceEntity, temperature);
+    }
+
+    public WeatherEntity(Integer id, LocalDateTime dateTime, CityEntity city, WeatherResourceEntity weatherResourceEntity, int temperature) {
         super(id);
         this.dateTime = dateTime;
         this.city = city;
-        this.service = service;
+        this.weatherResourceEntity = weatherResourceEntity;
         this.temperature = temperature;
     }
 
@@ -55,20 +60,20 @@ public class Weather extends AbstractBaseEntity {
         this.dateTime = dateTime;
     }
 
-    public City getCity() {
+    public CityEntity getCity() {
         return city;
     }
 
-    public void setCity(City city) {
+    public void setCity(CityEntity city) {
         this.city = city;
     }
 
-    public WeatherService getService() {
-        return service;
+    public WeatherResourceEntity getWeatherResourceEntity() {
+        return weatherResourceEntity;
     }
 
-    public void setService(WeatherService service) {
-        this.service = service;
+    public void setWeatherResourceEntity(WeatherResourceEntity weatherResourceEntity) {
+        this.weatherResourceEntity = weatherResourceEntity;
     }
 
     public int getTemperature() {
@@ -81,11 +86,11 @@ public class Weather extends AbstractBaseEntity {
 
     @Override
     public String toString() {
-        return "Weather{" +
+        return "WeatherEntity{" +
                 "id=" + id +
                 ", dateTime=" + dateTime +
                 ", city='" + city +
-                ", service=" + service +
+                ", weatherResourse=" + weatherResourceEntity +
                 ", temperature=" + temperature +
                 '}';
     }

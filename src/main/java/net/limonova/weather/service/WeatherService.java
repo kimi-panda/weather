@@ -1,9 +1,9 @@
 package net.limonova.weather.service;
 
-import net.limonova.weather.model.City;
-import net.limonova.weather.model.Weather;
-import net.limonova.weather.model.WeatherService;
-import net.limonova.weather.model.WeatherServiceEnum;
+import net.limonova.weather.model.CityEntity;
+import net.limonova.weather.model.WeatherEntity;
+import net.limonova.weather.model.WeatherResourceEntity;
+import net.limonova.weather.model.WeatherResource;
 import net.limonova.weather.repository.CityRepository;
 import net.limonova.weather.repository.ServiceRepository;
 import net.limonova.weather.repository.WeatherRepository;
@@ -14,7 +14,6 @@ import java.net.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -22,30 +21,30 @@ import java.util.List;
 
 @Service
 @Transactional
-public class MainService {
+public class WeatherService {
 
     private final WeatherRepository weatherRepository;
     private final CityRepository cityRepository;
     private final ServiceRepository serviceRepository;
 
     @Autowired
-    public MainService(WeatherRepository repository, CityRepository cityRepository, ServiceRepository serviceRepository) {
+    public WeatherService(WeatherRepository repository, CityRepository cityRepository, ServiceRepository serviceRepository) {
         this.weatherRepository = repository;
         this.cityRepository = cityRepository;
         this.serviceRepository = serviceRepository;
     }
 
-    public Integer getTemperature(City city, WeatherService service) {
-        if (service.getWeatherServiceEnum() == WeatherServiceEnum.GISMETEO) {
+    public Integer getTemperature(CityEntity city, WeatherResourceEntity weatherResourceEntity) {
+        if (weatherResourceEntity.getWeatherResource() == WeatherResource.GISMETEO) {
             try {
-                return getTemperatureGismeteo(city.getCodeGismeteo(), service.getUrlString());
+                return getTemperatureGismeteo(city.getCodeGismeteo(), weatherResourceEntity.getUrlString());
             } catch (Exception e) {}
         }
         return null;
     }
 
-    public Integer getTemperatureGismeteo(String codeGismeteo, String service_url) throws Exception {
-        URL url = new URL(service_url.replace("codeGismeteo", codeGismeteo));
+    public Integer getTemperatureGismeteo(String codeGismeteo, String weather_resource_url) throws Exception {
+        URL url = new URL(weather_resource_url.replace("codeGismeteo", codeGismeteo));
         InputStream stream = url.openStream();
         Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(stream);
         NodeList nodeList = doc.getElementsByTagName("TEMPERATURE");
@@ -54,21 +53,21 @@ public class MainService {
         return temperature;
     }
 
-    public Weather create(Weather weather, int city_id, int service_id) {
-        Assert.notNull(weather, "weather must not be null");
-        City city = cityRepository.findById(city_id).orElse(null);
-        WeatherService service = serviceRepository.findById(service_id).orElse(null);
-        Assert.notNull(city, "city must not be null");
+    public WeatherEntity create(WeatherEntity weather, int city_id, int weather_resource_id) {
+        CityEntity city = cityRepository.findById(city_id).orElse(null);
+        WeatherResourceEntity weatherResourceEntity = serviceRepository.findById(weather_resource_id).orElse(null);
         weather.setCity(city);
-        Assert.notNull(service, "service must not be null");
-        weather.setService(service);
-        Integer temperature = getTemperature(city, service);
-        Assert.notNull(temperature, "temperature must not be null");
+        weather.setWeatherResourceEntity(weatherResourceEntity);
+        Integer temperature = getTemperature(city, weatherResourceEntity);
         weather.setTemperature(temperature);
         return weatherRepository.save(weather);
     }
 
-    public List<Weather> getAll() {
+    public List<WeatherEntity> getAll() {
         return weatherRepository.findAll();
+    }
+
+    public WeatherEntity get(int id) {
+        return weatherRepository.findById(id).orElse(null);
     }
 }

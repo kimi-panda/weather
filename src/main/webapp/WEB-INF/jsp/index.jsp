@@ -10,10 +10,10 @@
 <section>
     <form method="post" action="weatherList">
         Город: <select name="cityId">
-        <option value="100000" selected>Москва</option>
+        <option value="100000" selected>Якутск</option>
         <option value="100001">Челябинск</option>
     </select>
-        Погодный сервис: <select name="service">
+        Погодный сервис: <select name="weather_resource">
         <option value="100002" selected>Gismeteo</option>
     </select>
         <button type="submit">Выбрать</button>

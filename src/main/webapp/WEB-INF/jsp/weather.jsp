@@ -8,7 +8,7 @@
 <header>Погода</header>
 <br>
 <section>
-
+    <h3><a href="/weather">Home</a></h3>
     <hr>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
@@ -20,11 +20,11 @@
         </tr>
         </thead>
         <c:forEach items="${weather}" var="weather">
-            <jsp:useBean id="weather" scope="page" type="net.limonova.weather.model.Weather"/>
+            <jsp:useBean id="weather" scope="page" type="net.limonova.weather.model.WeatherEntity"/>
             <tr>
                 <td>${fn:formatDateTime(weather.dateTime)}</td>
                 <td>${weather.city.name}</td>
-                <td>${weather.service.weatherServiceEnum}</td>
+                <td>${weather.weatherResourceEntity.weatherResource}</td>
                 <td>${weather.temperature}</td>
             </tr>
         </c:forEach>

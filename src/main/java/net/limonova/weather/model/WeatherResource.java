@@ -1,5 +1,5 @@
 package net.limonova.weather.model;
 
-public enum WeatherServiceEnum {
+public enum WeatherResource {
     GISMETEO;
 }
